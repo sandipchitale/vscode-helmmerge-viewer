@@ -1,0 +1,94 @@
+<p-sidebar [style]="{width:'30vw', height: '100%'}" [(visible)]="sidebarVisible" [showCloseIcon]="false">
+  <div class="files p-card">
+    <div class="filesheader">
+      <p-toolbar>
+        <div class="p-toolbar-group-left">
+          <h4>Values files</h4>
+        </div>
+        <div class="p-toolbar-group-right">
+            <!-- <p-button icon="pi pi-upload"></p-button> -->
+            <p-fileUpload pTooltip="Upload values file." #upload mode="basic"
+              name="valuesFiles[]"
+              chooseIcon="pi pi-upload"
+              [maxFileSize]="1000000"
+              [customUpload]="true"
+              (uploadHandler)="uploadHandler($event, upload)"
+              [auto]="true"></p-fileUpload>
+        </div>
+      </p-toolbar>
+    </div>
+    <p-table class="filestable" [value]="yamlFiles" [(selection)]="selectedYamlFiles" dataKey="id"
+      (onRowSelect)=onSelection()
+      (onRowUnselect)=onSelection()>
+      <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              &nbsp;
+            </th>
+            <th>Path</th>
+            <th style="width: 10.4rem;">&nbsp;</th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-file let-index="rowIndex">
+          <tr [pSelectableRow]="file">
+            <td>
+              <p-tableCheckbox [value]="file"></p-tableCheckbox>
+            </td>
+            <td>
+              {{ file.path }}
+            </td>
+            <td class="p-text-center" style="width: 10.5rem !important;">
+              <p-button pTooltip="Move up (available when none selected)" icon="pi pi-arrow-up" class="p-ml-2" styleClass="p-button-warning" (click)="moveFileUp(index)"
+                [disabled]="selectedYamlFiles.length > 0 || index === 0"></p-button>
+              <p-button pTooltip="Move down (available when none selected)" icon="pi pi-arrow-down" class="p-ml-2" styleClass="p-button-warning" (click)="moveFileDown(index)"
+                [disabled]="selectedYamlFiles.length > 0 || index === (yamlFiles.length - 1)"></p-button>
+              <p-button  pTooltip="Remove (available when none selected)" icon="pi pi-times" class="p-ml-2" styleClass="p-button-danger" (click)="removeFile(index)"
+                [disabled]="selectedYamlFiles.length > 0"></p-button>
+            </td>
+          </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-sidebar>
+<div class="wrapper">
+  <div class="main">
+    <div class="sidebyside p-card p-m-2">
+      <div class="sidebysidetabstoggles p-mt-3">
+        <p-button pTooltip="Show upload panel" icon="pi pi-arrow-right" class="p-mr-5" (click)="sidebarVisible = true" *ngIf="!sidebarVisible"></p-button>
+        <ng-container *ngFor="let selectedYamlFile of selectedYamlFiles; let last = last">
+          <p-checkbox class="p-mr-2" [(ngModel)]="selectedYamlFile.include" [binary]="true" (onChange)="onSelection()"></p-checkbox>
+          <p-toggleButton [(ngModel)]="selectedYamlFile.showWhenSelected"
+            [onLabel]="selectedYamlFile.path  + '@' + selectedYamlFile.id"
+            [offLabel]="selectedYamlFile.path + '@' + selectedYamlFile.id"></p-toggleButton>
+          <i *ngIf="!last" class="pi pi-angle-left p-mx-2 p-my-auto" title="Overides"></i>
+        </ng-container>
+      </div>
+      <div class="sidebysidetabs p-mt-2">
+        <ng-container *ngFor="let selectedYamlFile of selectedYamlFiles; let index = index; let last = last">
+          <ng-container *ngIf="selectedYamlFile.showWhenSelected">
+            <div class="sidebartab">
+              <div class="p-text-bold p-mx-2">{{selectedYamlFile.path  + '@' + selectedYamlFile.id}}</div>
+              <textarea class="p-m-2 p-p-2"
+                readOnly
+                [ngStyle]="{backgroundColor: 'var(--orange-' + ((index + 1)* 100) + ')', color: index > 4 ? 'white' : 'inherited'}"
+                [value]="selectedYamlFile.contents" style="flex-grow: 1;"></textarea>
+            </div>
+          </ng-container>
+          <div *ngIf="selectedYamlFiles.length > 0 && !last" class="p-d-flex p-flex-column p-jc-center p-ai-center">
+            <p-button pTooltip="Compare" icon="pi pi-pause" class="p-mb-2" (click)="compare(selectedYamlFiles[index], selectedYamlFiles[index + 1])"></p-button>
+            <i class="pi pi-angle-left" title="Overides"></i>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="merged p-card p-mx-2 p-mb-2">
+      <div class="mergedheader p-text-center">
+        <h4>Merged</h4>
+      </div>
+      <textarea class="mergedbody p-m-2 p-p-2"
+        readOnly
+        [ngStyle]="selectedYamlFiles.length === 0 ? {} : {backgroundColor: 'var(--orange-' + (selectedYamlFiles.length* 100) + ')', color: (selectedYamlFiles.length -1) > 4 ? 'white' : 'inherited'}"
+        [value]="mergedYaml"></textarea>
+    </div>
+  </div>
+</div>

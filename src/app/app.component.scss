@@ -1,0 +1,97 @@
+.files {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, auto) 1fr;
+  grid-template-areas:
+    "filesheader"
+    "filestable"
+  ;
+
+  .filesheader {
+    grid-area: filesheader;
+  }
+
+  .filestable {
+    grid-area: filestable;
+  }
+}
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+
+  .main {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+      "sidebyside"
+      "merged"
+    ;
+
+    .sidebyside {
+      grid-area: sidebyside;
+
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(0, auto) 1fr;
+      grid-template-areas:
+        "sidebysidetabstoggles"
+        "sidebysidetabs"
+      ;
+
+      .sidebysidetabstoggles {
+        grid-area: sidebysidetabstoggles;
+
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+      }
+
+      .sidebysidetabs {
+        grid-area: sidebysidetabs;
+
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: stretch;
+
+        .sidebartab {
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: start;
+          align-items: stretch;
+        }
+      }
+    }
+
+    .merged {
+      grid-area: merged;
+
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(0, auto) 1fr;
+      grid-template-areas:
+        "mergedheader"
+        "mergedbody"
+      ;
+
+      .mergedheader {
+        grid-area: mergedheader;
+      }
+
+      .mergedbody {
+        grid-area: mergedbody;
+      }
+    }
+  }
+}
+
+
+
+
+
